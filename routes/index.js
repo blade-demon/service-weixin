@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var jssha = require('jssha');
+var jsSHA = require('jssha');
 
 /* GET home page. */
 router.get('/', function (req, res) {
@@ -19,6 +19,7 @@ router.get('/auth', (req, res) => {
   var signature = req.query.signature;
   var timestamp = req.query.timestamp;
   var echostr   = req.query.echostr;
+console.log("echostr:", echostr);
   var nonce     = req.query.nonce;
   var oriArray = new Array();
   oriArray[0] = nonce;
@@ -26,12 +27,13 @@ router.get('/auth', (req, res) => {
   oriArray[2] = token;
   oriArray.sort();
   var original = oriArray.join('');
-  var jsObj = new jssha(original, 'TEXT');
-  var scyptoString=shaObj.update('SHA-1', 'HEX');
-  console.log(scyptoString);
-  if(signature == scyptoString){
+ var shaObj = new jsSHA("SHA-1",'TEXT');
+  shaObj.update(original);
+  var hash = shaObj.getHash("HEX");
+  console.log(hash);
+  if(signature == hash){
     //验证成功
-    return res.send('ok');
+    return res.send(echostr);
   } else {
     //验证失败
     return res.status(500).send('ok');
