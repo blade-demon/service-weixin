@@ -1,6 +1,9 @@
 var express = require('express');
+const axios = require('axios');
 var router = express.Router();
 var jsSHA = require('jssha');
+const appId = 'wx6fe393e6fff92bbb';
+const appSecret = "";
 
 /* GET home page. */
 router.get('/', function(req, res) {
@@ -40,6 +43,17 @@ router.get('/auth', (req, res) => {
     return res.status(500).send('ok');
   }
 });
+
+router.post('/login', async (req, res) => {
+  const code = req.body.code;
+  const response = await code2session(appId, appSecret, code);
+  console.log(response.data);
+  res.send('ok');
+});
+
+
+
+const code2session = (appId, appSecret, js_code) => axios.get(`https://api.weixin.qq.com/sns/jscode2session?appid=${appId}&secret=${appSecret}&js_code=${js_code}&grant_type=authorization_code`);
 
 
 module.exports = router;
